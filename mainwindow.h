@@ -26,6 +26,8 @@ private slots:
 
     void fillStorageComboBox();
 
+    void fillTable();
+
 private:
     Ui::MainWindow *ui;
 };
