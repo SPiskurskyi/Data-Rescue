@@ -7,7 +7,11 @@
 #include <QStorageInfo>
 #include <QCheckBox>
 
+#include <QMessageBox>
+
 #define HEADER_LABELS_SIZE 5
+
+std::vector<QFileData> qfilesData;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     fillStorageComboBox();
     fillTableHeaders();
+
+    QString infoMessage;
+    infoMessage += "----------------------------------------------------------\n";
+    infoMessage += "Attention this is very raw version of this project\n";
+    infoMessage += "for now it proccesses and recoveres all files in bin\n";
+    infoMessage += "in future the functional of program will be extended\n";
+    infoMessage += "----------------------------------------------------------\n";
+    QMessageBox::information(this, "INFO", infoMessage);
+
 }
 
 MainWindow::~MainWindow()
@@ -23,11 +36,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::on_searchButton_clicked()
 {
     std::vector<FileData> filesData;
-    std::vector<QFileData> qfilesData;
     bool binRecovery = 1;
 
     ui->tableWidget->clearContents();
@@ -44,23 +55,56 @@ void MainWindow::on_searchButton_clicked()
 
 void MainWindow::on_recoverButton_clicked()
 {
-    // std::vector<FileData> selectedFiles;
-    // for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
-    //     if (ui->tableWidget->item(row, 0)->checkState() == Qt::Checked) {
-    //         FileData data;
-    //         data.filename = ui->tableWidget->item(row, 1)->text();
-    //         data.path = ui->tableWidget->item(row, 2)->text();
-    //         data.size = ui->tableWidget->item(row, 3)->text().toLongLong();
-    //         data.date = QDateTime::fromString(ui->tableWidget->item(row, 4)->text());
-    //         selectedFiles.push_back(data);
-    //     }
-    // }
+    bool binRecovery = true;
+    bool selected = false;
+    int ret;
+    QString infoMessage;
+    int rowCount = ui->tableWidget->rowCount();
+    int dataSize = static_cast<int>(qfilesData.size());
+
+    infoMessage += "-----------------------------\n";
+    for (int row = 0; row < rowCount; ++row) {
+        // Get the QWidget from the first column, which contains the QCheckBox
+        QWidget *widget = ui->tableWidget->cellWidget(row, 0);
+        if (widget) {
+            QCheckBox *checkBox = widget->findChild<QCheckBox *>();
+            if (checkBox && checkBox->isChecked()) {
+                selected = true;
+                if (row < dataSize) {
+                    const QFileData& fileData = qfilesData[row];
+                    infoMessage += fileData.originalName + "\n";
+                    if (binRecovery) {
+                        ret = RecoverFileFromRecycleBin(qfilesData[row].internalName);
+                        if(ret != 0) {
+                            QMessageBox::information(this, "Error", "Something gone wrong. ");
+                            return;
+                        }
+                    }
+                } else {
+                    infoMessage += "Error: Row index out of bounds for qfilesData\n";
+                }
+            }
+        }
+    }
+    infoMessage += "-----------------------------\n";
+    infoMessage += "Following files will was recovered successfully! \n";
+    if (selected) {
+        QMessageBox::information(this, "Selected File Information", infoMessage);
+    } else {
+        QMessageBox::information(this, "Selected File Information", "No items selected. Please select some items. ");
+    }
 }
 
 
 void MainWindow::on_infoButton_clicked()
 {
-
+    QString infoMessage;
+    infoMessage += "-----------------------------\n";
+    infoMessage += "Data-rescue\n";
+    //infoMessage += "Here must be info\n";
+    infoMessage += "(c) Serhii Piskurskyi\n";
+    infoMessage += "-----------------------------\n";
+    QMessageBox::information(this, "Info", infoMessage);
 }
 
 void MainWindow::fillTableHeaders() {
