@@ -1,19 +1,37 @@
 #include "fileData.h"
 
-// Generate random file data
-std::vector<QFileData> generateRandomFileData(int numFiles) {
-    std::vector<QFileData> fileData;
-    QStringList filenames = {"file1.txt", "file2.jpg", "file3.docx", "file4.pdf", "file5.png"};
-    QStringList paths = {"/path/to/file1", "/path/to/file2", "/path/to/file3", "/path/to/file4", "/path/to/file5"};
+std::vector<QFileData> convertToQFileData(const std::vector<FileData>& fileDataList) {
+    std::vector<QFileData> qFileDataList;
+    qFileDataList.reserve(fileDataList.size());
 
-    for (int i = 0; i < numFiles; ++i) {
-        QFileData data;
-        data.filename = filenames.at(rand() % filenames.size());
-        data.path = paths.at(rand() % paths.size());
-        data.size = rand() % 10000 + 100; // Random size between 100 and 10100 bytes
-        data.date = QDateTime::currentDateTime().addDays(-(rand() % 365)); // Random date within the past year
-        fileData.push_back(data);
+    for (const auto& fileData : fileDataList) {
+        QFileData qFileData;
+        qFileData.originalName = QString::fromStdWString(fileData.originalName);
+        qFileData.internalName = fileData.internalName;
+        qFileData.path = QString::fromStdWString(fileData.path);
+        qFileData.size = fileData.size;
+        qFileData.date = QString::fromStdWString(fileData.date);
+
+        qFileDataList.push_back(std::move(qFileData));
     }
 
-    return fileData;
+    return qFileDataList;
+}
+
+std::vector<FileData> convertToFileData(const std::vector<QFileData>& qFileDataList) {
+    std::vector<FileData> fileDataList;
+    fileDataList.reserve(qFileDataList.size());
+
+    for (const auto& qFileData : qFileDataList) {
+        FileData fileData;
+        fileData.originalName = qFileData.originalName.toStdWString();
+        fileData.internalName = qFileData.internalName;
+        fileData.path = qFileData.path.toStdWString();
+        fileData.size = qFileData.size;
+        fileData.date = qFileData.date.toStdWString();
+
+        fileDataList.push_back(std::move(fileData));
+    }
+
+    return fileDataList;
 }

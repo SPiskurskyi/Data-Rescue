@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>477</height>
+    <width>1000</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Data-Rescue</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -38,10 +38,10 @@
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>70</y>
-      <width>306</width>
-      <height>96</height>
+      <x>330</x>
+      <y>100</y>
+      <width>331</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -93,8 +93,8 @@ QPushButton:pressed {
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>82</width>
+         <height>82</height>
         </size>
        </property>
        <property name="shortcut">
@@ -159,8 +159,8 @@ QPushButton:pressed {
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>82</width>
+         <height>82</height>
         </size>
        </property>
        <property name="shortcut">
@@ -185,6 +185,9 @@ QPushButton:pressed {
      </item>
      <item>
       <widget class="QPushButton" name="infoButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="toolTip">
         <string/>
        </property>
@@ -225,8 +228,8 @@ QPushButton:pressed {
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>82</width>
+         <height>82</height>
         </size>
        </property>
        <property name="shortcut">
@@ -254,15 +257,15 @@ QPushButton:pressed {
    <widget class="QLabel" name="programName">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>10</y>
-      <width>221</width>
+      <x>350</x>
+      <y>40</y>
+      <width>301</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-    font-size: 32px;
+    font-size: 46px;
     font-weight: bold;
     color: #333333; /* Колір тексту */
     background-color: transparent;
@@ -277,10 +280,10 @@ QPushButton:pressed {
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>160</y>
-      <width>381</width>
-      <height>41</height>
+      <x>250</x>
+      <y>200</y>
+      <width>491</width>
+      <height>101</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -299,10 +302,10 @@ QPushButton:pressed {
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>75</x>
-      <y>210</y>
-      <width>551</width>
-      <height>241</height>
+      <x>40</x>
+      <y>280</y>
+      <width>924</width>
+      <height>421</height>
      </rect>
     </property>
    </widget>

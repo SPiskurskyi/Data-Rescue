@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "fileData.h"
+#include "binRecovery.h"
 
 #include <QComboBox>
 #include <QStorageInfo>
+#include <QCheckBox>
 
+#define HEADER_LABELS_SIZE 5
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     fillStorageComboBox();
-    fillTable();
+    fillTableHeaders();
 }
 
 MainWindow::~MainWindow()
@@ -23,7 +26,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchButton_clicked()
 {
+    std::vector<FileData> filesData;
+    std::vector<QFileData> qfilesData;
+    bool binRecovery = 1;
 
+    ui->tableWidget->clearContents();
+    ui->tableWidget->setRowCount(0);
+    ui->tableWidget->setColumnCount(HEADER_LABELS_SIZE);
+
+    if(binRecovery)
+        ListFilesInRecycleBin(filesData);
+
+    qfilesData = convertToQFileData(filesData);
+    fillTableItems(qfilesData);
 }
 
 
@@ -48,35 +63,49 @@ void MainWindow::on_infoButton_clicked()
 
 }
 
-void MainWindow::fillTable() {
+void MainWindow::fillTableHeaders() {
     // Set header labels
     QStringList headerLabels;
     headerLabels << "Selected" << "Filename" << "Path" << "Size" << "Date";
     ui->tableWidget->setColumnCount(headerLabels.size());
     ui->tableWidget->setHorizontalHeaderLabels(headerLabels);
+    ui->tableWidget->setColumnWidth(0, 75);   // Selected
+    ui->tableWidget->setColumnWidth(1, 175);  // Filename
+    ui->tableWidget->setColumnWidth(2, 475);  // Path
+    ui->tableWidget->setColumnWidth(3, 75);   // Size
+    ui->tableWidget->setColumnWidth(4, 100);   // Date
+}
 
-    std::vector<QFileData> fileData = generateRandomFileData(10);
-
+void MainWindow::fillTableItems(std::vector<QFileData> &filesData) {
     // Assuming you have a vector of data called 'fileData'
-    for (const auto& item : fileData) {
+    for (const auto& item : filesData) {
         int row = ui->tableWidget->rowCount();
         ui->tableWidget->insertRow(row);
 
-        QTableWidgetItem *selectItem = new QTableWidgetItem();
-        selectItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled); // Make checkbox user checkable
-        selectItem->setCheckState(Qt::Unchecked); // Unchecked by default
+        // Create a QWidget to hold the QCheckBox
+        QWidget *checkboxWidget = new QWidget();
+        QCheckBox *checkBox = new QCheckBox();
+        QHBoxLayout *layout = new QHBoxLayout(checkboxWidget);
 
-        QTableWidgetItem *filenameItem = new QTableWidgetItem(item.filename);
+        // Center the checkbox within the widget
+        layout->addWidget(checkBox);
+        layout->setAlignment(Qt::AlignCenter);
+        layout->setContentsMargins(0, 0, 0, 0);
+
+        // Set the checkbox state to unchecked
+        checkBox->setChecked(false);
+
+        QTableWidgetItem *filenameItem = new QTableWidgetItem(item.originalName);
         QTableWidgetItem *pathItem = new QTableWidgetItem(item.path);
         QTableWidgetItem *sizeItem = new QTableWidgetItem(QString::number(item.size));
-        QTableWidgetItem *dateItem = new QTableWidgetItem(item.date.toString());
+        QTableWidgetItem *dateItem = new QTableWidgetItem(item.date);
 
         filenameItem->setFlags(filenameItem->flags() & ~Qt::ItemIsEditable);
         pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
         sizeItem->setFlags(sizeItem->flags() & ~Qt::ItemIsEditable);
         dateItem->setFlags(dateItem->flags() & ~Qt::ItemIsEditable);
 
-        ui->tableWidget->setItem(row, 0, selectItem);
+        ui->tableWidget->setCellWidget(row, 0, checkboxWidget);
         ui->tableWidget->setItem(row, 1, filenameItem);
         ui->tableWidget->setItem(row, 2, pathItem);
         ui->tableWidget->setItem(row, 3, sizeItem);

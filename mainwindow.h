@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "fileData.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,7 +27,9 @@ private slots:
 
     void fillStorageComboBox();
 
-    void fillTable();
+    void fillTableHeaders();
+
+    void fillTableItems(std::vector<QFileData> &filesData);
 
 private:
     Ui::MainWindow *ui;
